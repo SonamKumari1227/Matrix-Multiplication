@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Calculator for Matrix - Multiplication </title>
+    <style>
+  body {
+            background: linear-gradient(to bottom, #5c3678, #800080); /* Purple gradient */
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 200vh;
+            margin: 0;
+            color: rgb(76, 18, 91);
+            font-family: 'Arial', sans-serif;
+        }
+
+        div {
+            background-color: rgba(255, 255, 255, 0.8); /* White background with transparency */
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.3); /* Shadow effect */
+            text-align: center;
+        }
+
+        label {
+            margin: 5px;
+            display: block;
+            font-weight: bold;
+        }
+
+        input {
+            width: 60px; /* Adjusted width for better fit */
+            height: 30px;
+            text-align: center;
+            margin: 5px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            font-size: 14px;
+        }
+
+        button {
+            padding: 10px 20px;
+            margin: 10px;
+            cursor: pointer;
+            background-color: #800080; /* Purple button color */
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+            font-size: 16px;
+        }
+
+        table {
+            border-collapse: collapse;
+            margin-top: 20px;
+            width: 100%;
+        }
+
+        table, td {
+            border: 1px solid #000;
+            height: 30px;
+            text-align: center;
+        }
+
+        h2 {
+            margin-bottom: 10px;
+            color: #800080; 
+        }
+
+        #resultContainer {
+            margin-top: 20px;
+            max-height: 300px; 
+            overflow-y: auto; 
+        }
+
+        #matrixInputsB {
+            margin-top: 10px;
+            max-height: 200px;
+            overflow-y: auto; 
+        }
+    </style>
+</head>
+<body>
+    <div>
+        <label>Rows of Matrix A: <input type="number" id="matrixARows" min="1"></label>
+        <label>Columns of Matrix A: <input type="number" id="matrixAColumns" min="1"></label>
+
+        <label>Rows of Matrix B: <input type="number" id="matrixBRows" min="1"></label>
+        <label>Columns of Matrix B: <input type="number" id="matrixBColumns" min="1"></label>
+
+        <button onclick="createMatrices()">Enter Matrix Values</button>
+        <button onclick="multiplyMatrices()">Multiply Matrices</button>
+
+        <div id="matrixInputsA"></div>
+        <div id="matrixInputsB"></div>
+        <div id="resultContainer"></div>
+    </div>
+
+    <script>
+          function createMatrixInputs(matrix, rows, columns) {
+    const matrixInputsContainer = document.getElementById(`matrixInputs${matrix}`);
+    matrixInputsContainer.innerHTML = `<h2>Enter values for Matrix ${matrix}</h2>`;
+
+    for (let i = 0; i < rows; i++) {
+        for (let j = 0; j < columns; j++) {
+            const input = document.createElement('input');
+            input.type = 'number';
+            input.placeholder = `(${i + 1}, ${j + 1})`;
+            matrixInputsContainer.appendChild(input);
+        }
+        matrixInputsContainer.appendChild(document.createElement('br')); 
+    }
+}
+        function createMatrices() {
+            const matrixARows = parseInt(document.getElementById('matrixARows').value);
+            const matrixAColumns = parseInt(document.getElementById('matrixAColumns').value);
+            const matrixBRows = parseInt(document.getElementById('matrixBRows').value);
+            const matrixBColumns = parseInt(document.getElementById('matrixBColumns').value);
+
+            if (isNaN(matrixARows) || isNaN(matrixAColumns) || isNaN(matrixBRows) || isNaN(matrixBColumns)) {
+                alert('Please enter valid numbers for matrix dimensions.');
+                return;
+            }
+
+            createMatrixInputs('A', matrixARows, matrixAColumns);
+            createMatrixInputs('B', matrixBRows, matrixBColumns);
+        }
+
+      
+        function multiplyMatrices() {
+        const matrixARows = parseInt(document.getElementById('matrixARows').value);
+        const matrixAColumns = parseInt(document.getElementById('matrixAColumns').value);
+        const matrixBRows = parseInt(document.getElementById('matrixBRows').value);
+        const matrixBColumns = parseInt(document.getElementById('matrixBColumns').value);
+
+        const matrixA = getMatrixValues('A', matrixARows, matrixAColumns);
+        const matrixB = getMatrixValues('B', matrixBRows, matrixBColumns);
+
+        if (!matrixA || !matrixB) {
+            alert('Please enter valid numbers for matrix values.');
+            return;
+        }
+
+        const resultMatrix = multiply(matrixA, matrixB);
+
+        displayResult(resultMatrix);
+    }
+
+
+    function multiply(matrixA, matrixB) {
+        const resultMatrix = [];
+
+        // Matrix multiplication logic
+        for (let i = 0; i < matrixA.length; i++) {
+            resultMatrix[i] = [];
+            for (let j = 0; j < matrixB[0].length; j++) {
+                resultMatrix[i][j] = 0;
+                for (let k = 0; k < matrixA[0].length; k++) {
+                    resultMatrix[i][j] += matrixA[i][k] * matrixB[k][j];
+                }
+            }
+        }
+
+        return resultMatrix;
+    }
+    function getMatrixValues(matrix, rows, columns) {
+    const matrixValues = [];
+    const matrixInputsContainer = document.getElementById(`matrixInputs${matrix}`);
+    let inputCount = 0;
+
+    for (let i = 0; i < rows; i++) {
+        matrixValues[i] = [];
+        for (let j = 0; j < columns; j++) {
+            // Skip non-input elements
+            while (
+                inputCount < matrixInputsContainer.children.length &&
+                (matrixInputsContainer.children[inputCount].nodeName !== 'INPUT' ||
+                    matrixInputsContainer.children[inputCount].type !== 'number')
+            ) {
+                inputCount++;
+            }
+
+            if (inputCount >= matrixInputsContainer.children.length) {
+                return null; 
+            }
+
+            const inputValue = parseFloat(matrixInputsContainer.children[inputCount].value);
+            if (isNaN(inputValue)) {
+                return null; 
+            }
+            matrixValues[i][j] = inputValue;
+            inputCount++;
+        }
+    }
+
+    return matrixValues;
+}
+
+
+    function displayResult(resultMatrix) {
+        const resultContainer = document.getElementById('resultContainer');
+        resultContainer.innerHTML = "<h2>Result Matrix</h2>";
+        const table = document.createElement("table");
+
+        for (let i = 0; i < resultMatrix.length; i++) {
+            const row = document.createElement("tr");
+            for (let j = 0; j < resultMatrix[0].length; j++) {
+                const cell = document.createElement("td");
+                cell.textContent = resultMatrix[i][j];
+                row.appendChild(cell);
+            }
+            table.appendChild(row);
+        }
+
+      
+        resultContainer.appendChild(table);
+    }
+    </script>
+</body>
+</html>
+
