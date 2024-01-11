@@ -25,8 +25,13 @@ This web-based Matrix Multiplication Calculator allows users to perform matrix m
 
 - **Styling:** The calculator features a visually appealing design with a purple linear gradient background, white input containers, and a shadow effect for a modern look.
 - **Scrolling:** To handle large matrices, the calculator includes a scroll bar for both input matrices and the result container.
+- 
+![Image Alt Text](/matrix1.png)
 
-## Usage
+![Image Alt Text](/matrix2.png)
+
+![Image Alt Text](/matrix3.png)
+
 
 Clone the repository and open the `index.html` file in a web browser.
 
